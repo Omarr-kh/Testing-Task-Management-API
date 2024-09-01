@@ -6,24 +6,17 @@
 ## **Base URL**
 `/api/tasks/`
 
-## **Authentication**
-- All endpoints require the user to be authenticated.
-- The user must be logged in to create, update, or delete tasks.
-
----
-
 ## **Endpoint: List and Create Tasks**
 
 - **URL:** `/api/tasks/`
 - **Method:** `GET`, `POST`
-- **Authentication Required:** Yes
 
 ### **List Tasks (GET)**
-- **Description:** Retrieves a list of tasks associated with the authenticated user.
+- **Description:** Retrieves a list of tasks.
   
 #### **Request:**
-- **Headers:**
-  - `Authorization: Token <token>`
+- **Url:**
+  - `/api/tasks`
 
 #### **Response:**
 - **Status Code:** `200 OK`
@@ -47,11 +40,10 @@
 ```
 
 ### **Create Task (POST)**
-- **Description:** Creates a new task for the authenticated user.
+- **Description:** Creates a new task.
   
 #### **Request:**
 - **Headers:**
-  - `Authorization: Token <token>`
   - `Content-Type: application/json`
   
 - **Body:**
@@ -96,10 +88,6 @@
 
 ### **Retrieve Task (GET)**
 - **Description:** Retrieves details of a specific task.
-  
-#### **Request:**
-- **Headers:**
-  - `Authorization: Token <token>`
 
 #### **Response:**
 - **Status Code:** `200 OK`
@@ -128,7 +116,6 @@
   
 #### **Request:**
 - **Headers:**
-  - `Authorization: Token <token>`
   - `Content-Type: application/json`
   
 - **Body:**
@@ -163,13 +150,6 @@
     ]
 }
 ```
-- **Status Code:** `403 Forbidden` (e.g., user not authorized to update the task)
-
-```json
-{
-    "detail": "You do not have permission to perform this action."
-}
-```
 
 - **Status Code:** `404 Not Found` (e.g., task does not exist)
   
@@ -181,22 +161,12 @@
 
 ### **Delete Task (DELETE)**
 - **Description:** Deletes a specific task.
-  
-#### **Request:**
-- **Headers:**
-  - `Authorization: Token <token>`
 
 #### **Response:**
 - **Status Code:** `204 No Content`
 
 #### **Error Responses:**
-- **Status Code:** `403 Forbidden` (e.g., user not authorized to delete the task)
 
-```json
-{
-    "detail": "You do not have permission to perform this action."
-}
-```
 - **Status Code:** `404 Not Found` (e.g., task does not exist)
   
 ```json
@@ -211,59 +181,30 @@
 
 ### **Using Postman**
 
-1. **Authentication:**
-   - Use the login endpoint to authenticate and get the token.
-   - Set the `Authorization` header with the token in your requests.
-
-2. **List Tasks (GET):**
+1. **List Tasks (GET):**
    - Set the method to `GET`.
    - Set the URL to `/api/tasks/`.
-   - Add the `Authorization` header.
    - Click "Send" to retrieve the list of tasks.
 
-3. **Create Task (POST):**
+2. **Create Task (POST):**
    - Set the method to `POST`.
    - Set the URL to `/api/tasks/`.
-   - Add the `Authorization` header.
    - Set the `Content-Type` to `application/json`.
    - Provide the `title` and `description` fields in the request body.
    - Click "Send" to create a new task.
 
-4. **Update Task (PUT):**
+3. **Update Task (PUT):**
    - Set the method to `PUT`.
    - Set the URL to `/api/tasks/<task_id>/`.
-   - Add the `Authorization` header.
    - Set the `Content-Type` to `application/json`.
    - Provide the updated `title`, `description`, and `status` fields in the request body.
    - Click "Send" to update the task.
 
-5. **Delete Task (DELETE):**
+4. **Delete Task (DELETE):**
    - Set the method to `DELETE`.
    - Set the URL to `/api/tasks/<task_id>/`.
-   - Add the `Authorization` header.
    - Click "Send" to delete the task.
 
-### **Using curl**
-
-1. **List Tasks:**
-   ```bash
-   curl -H "Authorization: Token <token>" -X GET http://<base_url>/api/tasks/
-   ```
-
-2. **Create Task:**
-   ```bash
-   curl -H "Authorization: Token <token>" -H "Content-Type: application/json" -X POST -d '{"title":"New Task", "description":"New Description"}' http://<base_url>/api/tasks/
-   ```
-
-3. **Update Task:**
-   ```bash
-   curl -H "Authorization: Token <token>" -H "Content-Type: application/json" -X PUT -d '{"title":"Updated Task", "description":"Updated Description", "status":true}' http://<base_url>/api/tasks/<task_id>/
-   ```
-
-4. **Delete Task:**
-   ```bash
-   curl -H "Authorization: Token <token>" -X DELETE http://<base_url>/api/tasks/<task_id>/
-   ```
 
 ### **Testing Invalid Requests**
 
