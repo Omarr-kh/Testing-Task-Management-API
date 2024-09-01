@@ -172,24 +172,26 @@ class TaskAPIDelete(APITestCase):
         self.assertEqual(Task.objects.all().count(), 1)
 
 
-# class TaskModelTest(TestCase):
-#     def setUp(self) -> None:
-#         self.user = User.objects.create_user(username="omar", password="12345")
+class TaskAPIRetrieve(APITestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username="omar", password="12345")
+        self.client.login(username="omar", password="12345")
+        self.task = Task.objects.create(
+            user=self.user, title="Title #1 test", description="Description #1 test"
+        )
+        self.url = reverse("update-delete-retrieve-tasks", args=[self.task.id])
 
-#     def test_task_creation(self) -> None:
-#         Task.objects.create(
-#             user=self.user, title="Title #1", description="Description #1"
-#         )
-#         task = Task.objects.get(user=self.user)
-#         self.assertEqual(task.user, self.user)
-#         self.assertEqual(task.title, "Title #1")
-#         self.assertEqual(task.description, "Description #1")
-#         self.assertFalse(task.status)
+    def test_retrieve_view(self):
+        response = self.client.get(self.url, format="json")
+        task_data = response.data
 
-#     def test_task_deletion(self) -> None:
-#         task = Task.objects.create(
-#             user=self.user, title="Title #1", description="Description #1"
-#         )
-#         Task.objects.get(id=task.id).delete()
-#         self.assertEqual(Task.objects.all().count(), 0)
-#         self.assertFalse(Task.objects.filter(id=task.id).exists())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(task_data["title"], "Title #1 test")
+        self.assertEqual(task_data["description"], "Description #1 test")
+        self.assertFalse(task_data["status"])
+
+    def test_retrieve_view_nonexistent_task(self):
+        url = reverse("update-delete-retrieve-tasks", args=[50])
+        response = self.client.get(url, format="json")
+
+        self.assertEqual(response.status_code, 404)
