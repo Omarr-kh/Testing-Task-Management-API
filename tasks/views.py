@@ -12,7 +12,7 @@ class ListCreateTasks(generics.ListCreateAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class UpdateDeleteTasks(generics.RetrieveUpdateDestroyAPIView):
+class UpdateDeleteRetrieveTasks(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = [permissions.AllowAny]
