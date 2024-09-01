@@ -80,3 +80,59 @@ class TaskAPIList(APITestCase):
         response = self.client.get(url, format="json")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 0)
+
+
+class TaskAPIUpdate(APITestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username="omar", password="12345")
+        self.client.login(username="omar", password="12345")
+        self.task = Task.objects.create(
+            user=self.user, title="Title #1 test", description="Description #1 test"
+        )
+        self.url = reverse("update-delete-tasks", args=[self.task.id])
+
+    def test_update_view(self) -> None:
+        updated_data = {
+            "title": "updated title",
+            "description": "updated description",
+            "status": True,
+        }
+        response = self.client.put(self.url, updated_data, format="json")
+        updated_task = response.data
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(updated_task["title"], "updated title")
+        self.assertEqual(updated_task["description"], "updated description")
+        self.assertTrue(updated_task["status"])
+
+    def test_update_view_invalid_title_type(self) -> None:
+        updated_data = {
+            "title": True,
+            "description": "updated description",
+            "status": True,
+        }
+        response = self.client.put(self.url, updated_data, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_view_invalid_description_type(self) -> None:
+        updated_data = {
+            "title": "updated title",
+            "description": False,
+            "status": True,
+        }
+        response = self.client.put(self.url, updated_data, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_view_invalid_status_type(self) -> None:
+        updated_data = {
+            "title": "new title",
+            "description": "updated description",
+            "status": "new status",
+        }
+        response = self.client.put(self.url, updated_data, format="json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_view_nonexistent_object(self) -> None:
+        url = reverse("update-delete-tasks", args=[15])
+        response = self.client.put(url, {}, format="json")
+        self.assertEqual(response.status_code, 404)
