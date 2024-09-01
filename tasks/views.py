@@ -6,7 +6,13 @@ from .models import Task
 from .serializers import TaskSerializer
 
 
-class ViewCreateTasks(generics.ListCreateAPIView):
+class ListCreateTasks(generics.ListCreateAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class UpdateDeleteTasks(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = [permissions.AllowAny]
