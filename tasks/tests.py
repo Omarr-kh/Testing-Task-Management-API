@@ -136,3 +136,37 @@ class TaskAPIUpdate(APITestCase):
         url = reverse("update-delete-tasks", args=[15])
         response = self.client.put(url, {}, format="json")
         self.assertEqual(response.status_code, 404)
+
+
+class TaskAPIDelete(APITestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username="omar", password="12345")
+        self.client.login(username="omar", password="12345")
+        self.task = Task.objects.create(
+            user=self.user, title="Title #1 test", description="Description #1 test"
+        )
+        self.url = reverse("update-delete-tasks", args=[self.task.id])
+
+    def test_delete_view(self):
+        response = self.client.delete(self.url, format="json")
+
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Task.objects.filter(id=self.task.id).exists())
+        self.assertEqual(Task.objects.all().count(), 0)
+
+    def test_delete_view_after_create(self):
+        task = Task.objects.create(
+            user=self.user, title="title #2", description="description #2"
+        )
+        url = reverse("update-delete-tasks", args=[task.id])
+        response = self.client.delete(url, format="json")
+
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Task.objects.filter(id=task.id).exists())
+        self.assertEqual(Task.objects.all().count(), 1)
+
+    def test_delete_view_nonexistent_object(self) -> None:
+        url = reverse("update-delete-tasks", args=[15])
+        response = self.client.delete(url, format="json")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(Task.objects.all().count(), 1)
